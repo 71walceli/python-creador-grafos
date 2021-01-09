@@ -15,7 +15,10 @@ for frame in frame_a, frame_b:
 Label(win, text='Hi').grid(in_=frame_a, sticky=W)
 Label(win, text='Longer label, shorter box').grid(in_=frame_b, sticky=W)
 
-Entry(win).grid(in_=frame_a, row=0, column=1, sticky=W)
-Entry(win, width=5).grid(in_=frame_b, row=0, column=1, sticky=W)
+entry = Entry(win)
+entry.grid(in_=frame_a, row=0, column=1, sticky=W)
+btn = Button(text="Send")
+btn["command"] = lambda: print(entry.get())
+btn.grid(in_=frame_b, row=0, column=1, sticky=W)
 
 win.mainloop()

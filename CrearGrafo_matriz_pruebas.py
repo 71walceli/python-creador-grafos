@@ -1,5 +1,9 @@
-import CrearGrafo_matriz
+from CrearGrafo_matriz import *
 
 if __name__ == '__main__':
-    datosTipoGrafo = [["a", "b"], True, False]
-    CrearGrafo_matriz.CrearGrafo_matriz2(datosTipoGrafo)
+    datosTipoGrafo[CAMPO_NODOS]     = ["a", "b", "c"]
+    datosTipoGrafo[CAMPO_DIRIGIDO]  = False
+    datosTipoGrafo[CAMPO_PONDERADO] = False
+    #datosTipoGrafo[CAMPO_MATRIZ]    = None
+    CrearGrafo_matriz2(datosTipoGrafo)
+    print(datosTipoGrafo[CAMPO_MATRIZ])
