@@ -2,23 +2,20 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+from grafo import *
+
 SEPARACION = 10 # espaciado entre controles de la ventana
 
 # TODO Agregar a este regustro campo para la matriz
-datosTipoGrafo = [[], False, False, None]   #   Datos que `CrearGrado_matriz1` envía a la
-                                            # ventana para definir la matriz.
-CAMPO_NODOS     = 0
-CAMPO_DIRIGIDO  = 1
-CAMPO_PONDERADO = 2
-CAMPO_MATRIZ    = 3
+
 
 class CrearGrafo_matriz1(ttk.Frame):
     """
         Implementación de la ventana que permite definir el tipo de grafo y los vértices, antes de
     definir la matriz de adyacencio.
     """
-    def __init__(self, datosTipoGrafo, *args, **kwargs):
-        self.datosTipoGrafo = datosTipoGrafo
+    def __init__(self, datosGrafo, *args, **kwargs):
+        self.datosGrafo = datosGrafo
         super().__init__(*args, **kwargs)
 
         # 1. Ventana(título="Crear grafo por matriz de adyacencia")
@@ -82,14 +79,9 @@ class CrearGrafo_matriz1(ttk.Frame):
                                              "y caracteres alfanuméricos en el campo de vértices.")
                 return
 
-        #datosTipoGrafo = [
-        #    nodos,
-        #    self.dirigido_valor.get(),
-        #    self.ponderado_valor.get(),
-        #]
-        self.datosTipoGrafo[CAMPO_NODOS]     = nodos
-        self.datosTipoGrafo[CAMPO_DIRIGIDO]  = self.dirigido_valor.get()
-        self.datosTipoGrafo[CAMPO_PONDERADO] = self.ponderado_valor.get()
+        self.datosGrafo[CAMPO_NODOS]     = nodos
+        self.datosGrafo[CAMPO_DIRIGIDO]  = self.dirigido_valor.get()
+        self.datosGrafo[CAMPO_PONDERADO] = self.ponderado_valor.get()
         self.cerrarVentana()
 
     def cerrarVentana(self, event=None):
@@ -116,8 +108,8 @@ class CrearGrafo_matriz2(ttk.Frame):
     """
         Permite definir la matriz que corresponde al tipo de grafo.
     """
-    def __init__(self, datosTipoGrafo, *args, **kwargs):
-        self.datosTipoGrafo = datosTipoGrafo
+    def __init__(self, datosGrafo, *args, **kwargs):
+        self.datosGrafo = datosGrafo
         super().__init__(*args, **kwargs)
 
         # 1. Ventana(título="Crear grafo por matriz de adyacencia")
@@ -127,9 +119,9 @@ class CrearGrafo_matriz2(ttk.Frame):
 
         # 1.1.Etiqueta(texto=descripciónTipoGrafo, alineación=centrado)
         etiquetaTipoGrafo = ttk.Label(self, text="Dirigido:"
-                                                 f" {siNo(datosTipoGrafo[CAMPO_DIRIGIDO])}"
+                                                 f" {siNo(datosGrafo[CAMPO_DIRIGIDO])}"
                                                  "\nPonderado:"
-                                                 f" {siNo(datosTipoGrafo[CAMPO_PONDERADO])}"
+                                                 f" {siNo(datosGrafo[CAMPO_PONDERADO])}"
                                       )
         etiquetaTipoGrafo.pack(padx=SEPARACION, pady=SEPARACION)
 
@@ -145,7 +137,7 @@ class CrearGrafo_matriz2(ttk.Frame):
                                                                     # adyacencia
         matrizAdyacencia_marco2.pack(anchor=tk.CENTER, padx=SEPARACION, pady=SEPARACION)
 
-        nodos = datosTipoGrafo[CAMPO_NODOS]
+        nodos = datosGrafo[CAMPO_NODOS]
         self.matriz = []
         tamaño = range(len(nodos) + 1)
         for i in tamaño:
@@ -173,58 +165,44 @@ class CrearGrafo_matriz2(ttk.Frame):
         # FIN 1
 
     def validar(self, event=None):
-        valido = True
-        matriz = []
+        matriz_temp = []
         for fila in self.matriz[1:]:
-            if not valido:
-                break
             fila_ = []
             for entrada in fila[1:]:
                 dato = entrada.get()
-                if   self.datosTipoGrafo[CAMPO_PONDERADO] and dato.isdigit() and int(dato) >= 0:
-                    fila_.append(int(dato))
-                elif dato.isdigit() and int(dato) in [0, 1]:
-                    fila_.append(int(dato))
-                else:
-                    valido = False
-                    break
-            matriz.append(fila_)
+                if not dato.isdigit() or int(dato) < 0:
+                    messagebox.showerror(title="Error de validación",
+                                         message="Solo se permiten ingresar números naturales en la"
+                                                 " matriz.")
+                    return
 
-        if not datosTipoGrafo[CAMPO_DIRIGIDO] and valido:
-            for i in range(len(matriz)):
+                dato = int(dato)
+                if not self.datosGrafo[CAMPO_PONDERADO] and not dato in [0, 1]:
+                    messagebox.showerror(title="Error de validación",
+                                         message="Solo se permiten ingresar 0 o 1 para grafos no "
+                                                 "ponderados.")
+                    return
+
+                fila_.append(int(dato))
+            matriz_temp.append(fila_)
+
+        if not self.datosGrafo[CAMPO_DIRIGIDO]:
+            for i in range(len(matriz_temp)):
                 for j in range(i +1):
-                    if matriz[i][j] != matriz[j][i]:
-                        valido = False
-                        break
-                if not valido:
-                    break
+                    if matriz_temp[i][j] != matriz_temp[j][i]:
+                        messagebox.showerror(title="Error de validación",
+                                             message="Los valores en A_ij deben ser iguales que en "
+                                                     "A_ji para grafos no dirigidos")
+                        return
 
-        if valido:
-            datosTipoGrafo[CAMPO_MATRIZ] = matriz
-            self.cerrarVentana()
-
-        else:
-            if   not datosTipoGrafo[CAMPO_PONDERADO]:   #   Sea dirigido o no
-                messagebox.showerror(title="Error de validación",
-                                     message="Solo se permiten ingresar valores de 0 o 1.")
-            elif datosTipoGrafo[CAMPO_PONDERADO]:       #   Sea dirigido o no
-                messagebox.showerror(title="Error de validación",
-                                     message="Solo se permiten ingresar valores en la matriz que "
-                                             "sean números maturales.")
-            elif not datosTipoGrafo[CAMPO_DIRIGIDO]:
-                messagebox.showerror(title="Error de validación",
-                                     message="El dato ingresado debe ser el mismo, tanto por encima"
-                                             " como por debajo de la diagonal principal.")
-            else:
-                messagebox.showerror(title="Error de validación",
-                                     message="El dato ingresado debe ser numérico")
+        self.datosGrafo[CAMPO_MATRIZ] = matriz_temp
+        self.cerrarVentana()
 
     def cerrarVentana(self, event=None):
         """
             Destruye y cierra esta ventana, terminado ka recepción de eventos y destruyendo la
         ventana.
         :param event: evento pasado internamente por Tkinter
-        :return: None
         """
         self.quit()
         self.update()
@@ -236,9 +214,11 @@ class CrearGrafo_matriz2(ttk.Frame):
 
 
 if __name__ == "__main__":
-    CrearGrafo_matriz1(datosTipoGrafo)
+    datosGrafo = [[], False, False, []] #   Datos que `CrearGrado_matriz1` envía a la ventana para
+                                        # definir la matriz.
+    CrearGrafo_matriz1(datosGrafo)
 
-    if len(datosTipoGrafo[CAMPO_NODOS]) > 0:
-        CrearGrafo_matriz2(datosTipoGrafo)
-    if datosTipoGrafo[CAMPO_MATRIZ] is not None:
-        print(datosTipoGrafo)
+    if len(datosGrafo[CAMPO_NODOS]) > 0:
+        CrearGrafo_matriz2(datosGrafo)
+    if datosGrafo[CAMPO_MATRIZ] is not None:
+        print(datosGrafo)
