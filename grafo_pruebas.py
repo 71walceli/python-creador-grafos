@@ -1,3 +1,4 @@
+
 from grafo import generarAristas, CAMPO_ARISTAS
 
 if __name__ == '__main__':

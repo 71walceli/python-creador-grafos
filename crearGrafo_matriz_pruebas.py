@@ -1,4 +1,4 @@
-from crearGrafo_matriz import *
+from Ventanas import CrearGrafo_matriz2
 
 if __name__ == '__main__':
     datosGrafo[CAMPO_NODOS]     = ["a", "b", "c"]
