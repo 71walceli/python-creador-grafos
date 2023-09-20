@@ -7,9 +7,10 @@ if __name__ == '__main__':
         True,
         True,
         [
-            [1,2],
-            [3,4],
+            [1, 2],
+            [3, 4],
         ],
     ]
-    print(generarAristas(datosGrafo)[CAMPO_ARISTAS])
+    generarAristas(datosGrafo)
+    print(datosGrafo[CAMPO_ARISTAS])
 

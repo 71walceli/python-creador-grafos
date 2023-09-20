@@ -4,7 +4,7 @@ from tkinter.ttk import Frame
 from itertools import combinations
 
 from grafo import *
-from ventanaGrafo import DibujoGrafo
+from Ventanas import DibujoGrafo
 
 if __name__ == '__main__':
     datosGrafo = [[], False, False, [], []]

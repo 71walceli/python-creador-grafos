@@ -6,15 +6,15 @@ from grafo import *
 
 if __name__ == '__main__':
     datosGrafo = [[], False, False, [], []]
-    datosGrafo[CAMPO_NODOS]     = [chr(0x60+i) for i in range(1,3+1)]
+    datosGrafo[CAMPO_NODOS]     = [chr(0x60+i) for i in range(1,2+1)]
+    #datosGrafo[CAMPO_NODOS]     = [str(i) for i in range(1,2+1)]
     datosGrafo[CAMPO_DIRIGIDO]  = True
     datosGrafo[CAMPO_PONDERADO] = True
     datosGrafo[CAMPO_MATRIZ]    = [
-        [0, 1, 0],
-        [2, 5, 3],
-        [0, 4, 0],
+        [1, 1],
+        [1, 1],
     ]
-    datosGrafo = generarAristas(datosGrafo)
+    generarAristas(datosGrafo)
     #datosGrafo[CAMPO_ARISTAS]   = [
     #    ["B", "C", 100],
     #    ["A", 1C", 20],
